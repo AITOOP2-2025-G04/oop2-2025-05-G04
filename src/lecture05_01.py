@@ -23,9 +23,10 @@ def lecture05_01():
             g, b, r = google_img[y, x]
             # もし白色(255,255,255)だったら置き換える
             if (b, g, r) == (255, 255, 255):
-                pass
+                new_x = x % c_width
+                new_y = y % c_hight
+                google_img[y, x] = capture_img[new_y, new_x]
                 #implement me
 
     # 書き込み処理
-    # implement me
-
+    app.write_img('output_images/lecture05_01_K24072.png')
