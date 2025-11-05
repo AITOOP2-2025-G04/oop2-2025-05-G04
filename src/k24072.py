@@ -1,6 +1,6 @@
 import numpy as np
 import cv2
-from my_module.K21999.lecture05_camera_image_capture import MyVideoCapture  # ← 自分の学籍番号に合わせて
+from my_module.K24072.lecture05_camera_image_capture import MyVideoCapture  # ← 自分の学籍番号に合わせて
 
 def lecture05_01():
     # --- カメラキャプチャ実行 ---
