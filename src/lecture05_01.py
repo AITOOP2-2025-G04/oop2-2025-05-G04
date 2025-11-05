@@ -30,3 +30,4 @@ def lecture05_01():
 
     # 書き込み処理
     app.write_img('output_images/lecture05_01_K24072.png')
+
