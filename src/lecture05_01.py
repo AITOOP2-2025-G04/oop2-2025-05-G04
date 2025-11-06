@@ -1,33 +1,50 @@
 import numpy as np
 import cv2
-from my_module.K21999.lecture05_camera_image_capture import MyVideoCapture
+from my_module.K24072.lecture05_camera_image_capture import MyVideoCapture  # ← 自分の学籍番号に合わせて
 
 def lecture05_01():
-
-    # カメラキャプチャ実行
+    #　カメラキャプチャ実行
     app = MyVideoCapture()
-    app.run()
+    app.run()  # qキーで撮影終了
 
-    # 画像をローカル変数に保存
-    google_img : cv2.Mat = cv2.imread('images/google.png')
-    capture_img : cv2.Mat = cv2.imread('images/camera_capture.png') # 動作テスト用なので提出時にこの行を消すこと
-    # capture_img : cv2.Mat = "implement me"
+    #　画像読み込み
+    google_img: cv2.Mat = cv2.imread('images/google.png')
+    capture_img : cv2.Mat = cv2.imread('output_images/camera_capture.png')
 
-    g_hight, g_width, g_channel = google_img.shape
-    c_hight, c_width, c_channel = capture_img.shape
-    print(google_img.shape)
-    print(capture_img.shape)
+    # キャプチャ画像がNoneならエラー表示して終了
+    if capture_img is None:
+        print("エラー: カメラ画像が取得できませんでした。run() 内で 'q' を押しましたか？")
+        return
 
-    for x in range(g_width):
-        for y in range(g_hight):
-            g, b, r = google_img[y, x]
-            # もし白色(255,255,255)だったら置き換える
-            if (b, g, r) == (255, 255, 255):
-                new_x = x % c_width
-                new_y = y % c_hight
-                google_img[y, x] = capture_img[new_y, new_x]
-                #implement me
+    g_height, g_width, _ = google_img.shape
+    c_height, c_width, _ = capture_img.shape
 
-    # 書き込み処理
-    app.write_img('output_images/lecture05_01_K24072.png')
+    print("google.png :", google_img.shape)
+    print("capture_img:", capture_img.shape)
 
+    # キャプチャ画像を敷き詰める
+    tiled_img = np.zeros_like(google_img)
+    for y in range(0, g_height, c_height):
+        for x in range(0, g_width, c_width):
+            h_end = min(y + c_height, g_height)
+            w_end = min(x + c_width, g_width)
+            tiled_img[y:h_end, x:w_end] = capture_img[0:h_end - y, 0:w_end - x]
+
+    # 白色部分を置換
+    white_mask = np.all(google_img == [255, 255, 255], axis=2)
+    result_img = google_img.copy()
+    result_img[white_mask] = tiled_img[white_mask]
+
+    # 出力フォルダ作成
+    try:
+        __import__('pathlib').Path('output_images').mkdir()
+    except:
+        pass
+
+    # --- 画像保存 ---
+    output_path = 'output_images/lecture05_01_K24072.png'
+    cv2.imwrite(output_path, result_img)
+    print(f"保存完了: {output_path}")
+
+if __name__ == "__main__":
+    lecture05_01()
